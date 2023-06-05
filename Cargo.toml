@@ -1,0 +1,11 @@
+[package]
+name = "oscirs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+oscirs_linalg = { version = "0.1.0", path="oscirs_linalg" }
+oscirs_plot = { version = "0.1.0", path="oscirs_plot" }
+oscirs_stats = { version = "0.1.0", path="oscirs_stats" }
