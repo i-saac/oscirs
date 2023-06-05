@@ -1,5 +1,8 @@
+//! Statistical summary structs and implementations
+
 use std::f32::consts::PI;
 
+/// Five Number Summary struct
 #[derive(Debug)]
 pub struct FiveNumber {
     pub minimum: f32,
@@ -9,6 +12,7 @@ pub struct FiveNumber {
     pub maximum: f32
 }
 
+/// Normal Distribution description struct
 #[derive(Debug)]
 pub struct Normal {
     pub mean: f32,
@@ -16,7 +20,7 @@ pub struct Normal {
 }
 
 impl Normal {
-    // Convert normal distribution into discrete vectors
+    /// Convert normal distribution into discrete vectors
     pub fn to_distribution(&self) -> (Vec<f32>, Vec<f32>) {
         let n_samples: i32 = 100;
 

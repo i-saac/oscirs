@@ -1,16 +1,19 @@
+//! Matrix object and implementations
+
 use std::ops;
 
 use crate::LAResult;
 use crate::err::LAError;
 
-#[derive(Debug, Clone)] // Allow for debug printing and cloning
+/// Matrix object definition
+#[derive(Debug, Clone)]
 pub struct Matrix {
     data: Vec<f32>, // Data vector
     rows: usize, // Number of rows
     cols: usize // Number of columns
 }
 
-// Create new matrix
+/// Create new matrix (includes checking for matching number of elements)
 pub fn new_matrix(input_data: Vec<f32>, rows: usize, cols: usize) -> LAResult<Matrix> {
     let vec_len: usize = input_data.len(); // Get input_data length
     let comp_len: usize = rows * cols; // Get projected matrix size
@@ -27,17 +30,17 @@ pub fn new_matrix(input_data: Vec<f32>, rows: usize, cols: usize) -> LAResult<Ma
 }
 
 impl Matrix {
-    // Get number of rows in matrix
+    /// Get number of rows in matrix
     pub fn get_rows(&self) -> usize {
         return self.rows
     }
 
-    // Get number of columns in matrix
+    /// Get number of columns in matrix
     pub fn get_cols(&self) -> usize {
         return self.cols
     }
 
-    // Resize matrix dimensions (must have same total number of elements)
+    /// Resize matrix dimensions (must have same total number of elements)
     pub fn resize(&mut self, new_rows: usize, new_cols: usize) -> LAResult<()> {
         if (new_rows * new_cols) != self.data.len() {
             return Err(LAError::ResizeError)
@@ -49,12 +52,12 @@ impl Matrix {
         Ok(())
     }
 
-    // Get data of matrix in row-major vector form
+    /// Get data of matrix in row-major vector form
     pub fn get_data(&self) -> Vec<f32> {
         return self.data.clone()
     }
 
-    // Update matrix data
+    /// Update matrix data (must have same total number of elements)
     pub fn update_data(&mut self, new_data: Vec<f32>) -> LAResult<()> {
         if (self.rows * self.cols) != new_data.len() {
             return Err(LAError::DataUpdateError)

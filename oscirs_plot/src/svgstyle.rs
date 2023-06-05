@@ -1,5 +1,8 @@
+//! Definition and Implementations for SVGStyle struct
+
 use crate::Color;
 
+/// Struct containing plotting parameters for SVGFigure
 #[derive(Clone)]
 pub struct SVGStyle {
     pub stroke_color: Color,
@@ -8,6 +11,7 @@ pub struct SVGStyle {
     pub has_markers: bool
 }
 
+// Default parameters for SVGStyle
 impl Default for SVGStyle {
     fn default() -> SVGStyle {
         SVGStyle {

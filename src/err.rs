@@ -1,6 +1,9 @@
+//! Error handling module for oscirs
+
 use std::fmt;
 use std::error;
 
+/// Custom error type for oscirs crate
 #[derive(Debug)]
 pub enum SciError {
     DimensionsError,

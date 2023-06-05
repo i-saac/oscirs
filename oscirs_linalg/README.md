@@ -1,5 +1,9 @@
 # oscirs-linalg
 
+[![crates.io](https://shields.io/crates/v/oscirs_linalg)](https://crates.io/crates/oscirs_linalg)
+
+A linear algebra crate for Rust
+
 ## Description
 
 This crate allows for simple and easy linear algebra-related calculations using GPU parallelization through OpenCL 3.0.

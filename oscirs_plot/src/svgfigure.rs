@@ -1,3 +1,5 @@
+//! Plotting and .svg-based figure generation
+
 extern crate open;
 
 use std::fs::File;
@@ -7,10 +9,12 @@ use std::error::Error;
 use crate::Color;
 use crate::svgstyle::SVGStyle;
 
+/// Enum for legend location
 pub enum Location {
     Northwest
 }
 
+/// Struct containing information required to generate a finalized figure
 pub struct SVGFigure {
     width: i32,
     height: i32,
@@ -53,49 +57,49 @@ impl Default for SVGFigure {
 }
 
 impl SVGFigure {
-    // Set x label text
+    /// Set x label text
     pub fn label_x(&mut self, new_label: &str) {
         self.x_label = new_label.to_string();
     }
 
-    // Set y label text
+    /// Set y label text
     pub fn label_y(&mut self, new_label: &str) {
         self.y_label = new_label.to_string();
     }
     
-    // Set title text
+    /// Set title text
     pub fn title(&mut self, new_title: &str) {
         self.title = new_title.to_string();
     }
 
-    // Add data series
+    /// Add data series
     pub fn add_data(&mut self, x_data: &Vec<f32>, y_data: &Vec<f32>, plot_style: &SVGStyle) {
         self.x_dataset.push(x_data.clone());
         self.y_dataset.push(y_data.clone());
         self.plot_styles.push(plot_style.clone());
     }
 
-    // Set x axis limits
+    /// Set x axis limits
     pub fn set_xlims(&mut self, lower_lim: f32, upper_lim: f32) {
         self.x_limits = Some([lower_lim, upper_lim]);
     }
 
-    // Set y axis limits
+    /// Set y axis limits
     pub fn set_ylims(&mut self, lower_lim: f32, upper_lim: f32) {
         self.y_limits = Some([lower_lim, upper_lim]);
     }
 
-    // Set axis scales to equal
+    /// Set axis scales to equal
     pub fn axis_equal(&mut self) {
         self.axis_equal = true
     }
 
-    // Set axis scales to auto
+    /// Set axis scales to auto
     pub fn axis_auto(&mut self) {
         self.axis_equal = false
     }
 
-    // Assign legend labels
+    /// Assign legend labels
     pub fn assign_legend(&mut self, legend_names: &Vec<String>) {
         self.legend_names = Some(legend_names.clone());
     }
@@ -154,19 +158,26 @@ impl SVGFigure {
         }
     }
 
+    // Append drawn legend element to render_string (private function)
     fn draw_legend(&self, render_string: &mut String, location: Location) {
+        // Unwrap legend names into usable vector
         let entries: &Vec<String> = self.legend_names.as_ref().unwrap();
 
+        // Define rendering constants
         let entry_height: i32 = 20;
         let char_width: i32 = 8;
+
+        // Find maximum length of legend labels
         let max_entry_length: i32 = entries.into_iter()
             .fold(i32::MIN, |left, right| left.max(right.len() as i32));
 
+        // Get top left corner location of legend box
         let (legend_x_loc, legend_y_loc) = match location {
             Location::Northwest =>
                 (20, 20)
         };
 
+        // Draw box around legend
         render_string.push_str(&format!(r#"<rect x="{}" y="{}" width="{}" height="{}" fill="none" stroke="{}" stroke-width="{}"/>"#, 
             legend_x_loc,
             legend_y_loc,
@@ -176,7 +187,9 @@ impl SVGFigure {
             self.anno_style.stroke_width
         ));
 
+        // Drawing legend entries
         for entry_idx in 0..entries.len() {
+            // Draw legend label color key
             render_string.push_str(&format!(r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}" stroke="none" />"#,
                 legend_x_loc,
                 legend_y_loc + entry_idx as i32 * entry_height,
@@ -185,6 +198,7 @@ impl SVGFigure {
                 self.plot_styles[entry_idx].stroke_color
             ));
 
+            // Draw legend label text
             let entry_string: &String = &entries[entry_idx];
             render_string.push_str(&format!(r#"<text x="{}" y="{}" color="{}" dominant-baseline="middle">{}</text>"#,
                 legend_x_loc + entry_height + entry_height / 4,
@@ -195,7 +209,7 @@ impl SVGFigure {
         }
     }
 
-    // Compile plot data into file_name.svg and open the image
+    /// Compile plot data into file_name.svg and open the image
     pub fn render(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
         // Define point marker size
         let point_r: i32 = 3;

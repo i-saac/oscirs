@@ -1,3 +1,9 @@
+//! Calculator object allowing for GPU-accelerated matrix calculations
+//! 
+//! Stores input and resultant matrices in GPU memory buffers for repeated use
+//! 
+//! Includes support for compilation and execution of custom kernels
+
 use crate::LAResult;
 use crate::err::LAError;
 use crate::matrix::Matrix;
@@ -17,8 +23,10 @@ type ResultFunction = Box<dyn Fn(
     Vec<usize>
 ) -> LAResult<(Matrix, usize)>>;
 
+/// Shortcut type definition for closure defining output parameters for custom kernel
 pub type ParameterFunction = Box<dyn Fn(Vec<&Matrix>) -> LAResult<(usize, usize, Vec<usize>)>>;
 
+/// Wrapper that manages storage of matrices and custom kernels and manages calculation operations
 pub struct Calculator {
     memory_handler: MemoryHandler, // Memory handler
     matrices: Vec<Matrix>, // Calculator memory vector
@@ -27,6 +35,7 @@ pub struct Calculator {
     custom_idcs: Vec<usize>
 }
 
+/// Initializes Calculator struct
 pub fn init() -> LAResult<Calculator> {
     // Initialize vector of kernel names
     let program_vec: Vec<&str> = super::PROGRAM_LIST.to_vec();
@@ -53,7 +62,7 @@ pub fn init() -> LAResult<Calculator> {
 }
 
 impl Calculator {
-    // Store matrix to calculator and gpu memory
+    /// Store matrix to calculator and gpu memory
     pub fn store_matrix(&mut self, matrix: Matrix) -> LAResult<usize> {
         // Store matrix to calculator memory
         self.matrices.push(matrix.clone());
@@ -70,7 +79,7 @@ impl Calculator {
         Ok(output_idx)
     }
 
-    // Multiply Matrix and Matrix
+    /// Multiply Matrix and Matrix
     pub fn mat_mul(&mut self, left_idx: usize, right_idx: usize) -> LAResult<(Matrix, usize)> {
         let left: &Matrix = &self.matrices[left_idx];
         let right: &Matrix = &self.matrices[right_idx];
@@ -98,6 +107,7 @@ impl Calculator {
         Ok((output, output_idx))
     }
 
+    /// Compile and store a custom kernel and build/store a closure to execute said kernel
     pub unsafe fn load_custom_fn(
         &mut self,
         program_source: &str,
@@ -140,6 +150,7 @@ impl Calculator {
         return Ok(self.customs.len() - 1);
     }
 
+    /// Execute custom kernel via pre-generated closure
     pub unsafe fn exec_custom_fn(
         &mut self,
         custom_index: usize,

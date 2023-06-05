@@ -1,8 +1,11 @@
+//! Error handling module for oscirs_linalg
+
 use std::fmt;
 use std::error;
 
 use opencl3::error_codes::ClError;
 
+/// Custom error type for oscirs_linalg crate
 #[derive(Debug)]
 pub enum LAError {
     ArgumentError,

@@ -1,16 +1,24 @@
+//! [![crates.io](https://shields.io/crates/v/oscirs_linalg)](https://crates.io/crates/oscirs_linalg)
+//! 
+//! A linear algebra crate for Rust
+
 pub mod err;
 pub mod calculator;
 pub mod matrix;
-pub mod memory;
+mod memory;
 
+/// Custom result type using LAError
 pub type LAResult<T> = Result<T, err::LAError>;
 
+/// Default amount of memory slots for matrices in MemoryHandler and Calculator
 const INIT_MEMORY_CAPACITY: usize = 3;
 
+/// List of default kernel names
 const PROGRAM_LIST: [&str; 1] = [
     "mat_mul"
 ];
 
+/// Source code for default kernels
 const PROGRAM_SOURCE: &str = r#"
 kernel void mat_mul (
     global float* c,

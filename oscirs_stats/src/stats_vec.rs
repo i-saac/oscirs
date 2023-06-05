@@ -1,3 +1,5 @@
+//! Statistical analysis implmentations for standard vectors
+
 use crate::StatFuncs;
 use crate::summaries::{
     Normal,
@@ -5,14 +7,12 @@ use crate::summaries::{
 };
 
 impl StatFuncs for Vec<f32> {
-    // Get arithmetic mean of vector
     fn mean(&self) -> f32 {
         let sum: f32 = self.into_iter().sum();
 
         sum / (self.len() as f32)
     }
 
-    // Get arithmetic mean and standard deviation of vector
     fn normal(&self) -> Normal {
         let mean: f32 = self.mean();
 
@@ -23,8 +23,7 @@ impl StatFuncs for Vec<f32> {
 
         Normal { mean: mean, std_dev: std_dev }
     }
-
-    // Get five-number summary of vector (inclusive of median in quartile calculations)
+    
     fn five_number(&self) -> FiveNumber {
         let mut sorted_vec: Vec<f32> = self.clone();
         sorted_vec.sort_by(|a, b| a.partial_cmp(b).unwrap());

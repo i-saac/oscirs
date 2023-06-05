@@ -1,15 +1,20 @@
+//! [![crates.io](https://shields.io/crates/v/oscirs_plot)](https://crates.io/crates/oscirs_plot)
+//! 
+//! A plotting library for Rust
+
 use std::fmt;
 
 pub mod svgfigure;
 pub mod svgstyle;
 
-// Simplified svgplot module to clean up imports and get you plotting quickly
+/// Simplified svgplot module to clean up imports and get you plotting quickly
 pub mod svgplot_core {
     pub use crate::Color;
     pub use crate::svgfigure::SVGFigure;
     pub use crate::svgstyle::SVGStyle;
 }
 
+/// Enum of plotting colors
 #[derive(Clone)]
 pub enum Color {
     Red,
