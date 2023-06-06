@@ -142,6 +142,18 @@ fn matrix_multiplication() {
 }
 
 #[test]
+fn matrix_indexing() {
+    let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+
+    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+        .expect("Failed to create Matrix A");
+
+    assert_eq!(a_mat[[1, 1]], 5.0, "Indexed value not as expected");
+    assert_eq!(a_mat.row(1).expect("Failed to index row"), vec![4.0, 5.0, 6.0], "Indexed row not as expected");
+    assert_eq!(a_mat.col(2).expect("Failed to index col"), vec![3.0, 6.0], "Indexed col not as expected");
+}
+
+#[test]
 fn cpu_operations() {
     let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
     let b_vec: Vec<f32> = vec![2.0, 1.0, 2.0, 3.0, 2.0, 1.0];

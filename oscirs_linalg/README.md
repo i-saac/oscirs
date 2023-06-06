@@ -44,7 +44,7 @@ let result: Matrix = (mat + mat_2)
 assert_eq!(result.get_data(), vec![5.0; 6]);
 ```
 
-Matrices can be indexed using nested square brackets
+Matrices can be indexed using nested square brackets, and individual rows/cols can be indexed using the `row()` and `col()` methods respectively.
 
 ```rust
 assert_eq!(result[[1, 1]], 5.0);

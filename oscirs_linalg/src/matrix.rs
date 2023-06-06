@@ -68,6 +68,35 @@ impl Matrix {
         Ok(())
     }
 
+    /// Return selected row of self
+    pub fn row(&self, row_idx: usize) -> LAResult<Vec<f32>> {
+        if row_idx >= self.rows {
+            return Err(LAError::IndexError)
+        }
+
+        let lower_data_idx: usize = row_idx * self.cols;
+        let upper_data_idx: usize = (row_idx + 1) * self.cols;
+
+        let output_row: Vec<f32> = (lower_data_idx..upper_data_idx)
+            .map(|idx| self.data[idx])
+            .collect();
+
+        Ok(output_row)
+    }
+
+    /// Return selected col of self
+    pub fn col(&self, col_idx: usize) -> LAResult<Vec<f32>> {
+        if col_idx >= self.cols {
+            return Err(LAError::IndexError)
+        }
+
+        let output_col: Vec<f32> = (0..self.rows)
+            .map(|row| self.data[row * self.cols + col_idx])
+            .collect();
+
+        Ok(output_col)
+    }
+
     /// Return transpose of self
     pub fn transpose(&self) -> Matrix {
         let mut transpose_data: Vec<f32> = Vec::with_capacity(self.rows * self.cols); // Initialize vector for transpose data
