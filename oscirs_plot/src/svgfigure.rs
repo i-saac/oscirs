@@ -6,7 +6,10 @@ use std::fs::File;
 use std::io::Write;
 use std::error::Error;
 
-use crate::Color;
+use crate::{
+    ChartStyle,
+    Color
+};
 use crate::svgstyle::SVGStyle;
 
 /// Enum for legend location
@@ -19,6 +22,7 @@ pub struct SVGFigure {
     width: i32,
     height: i32,
     axis_pad: i32,
+    chart_style: ChartStyle,
     x_label: String,
     x_limits: Option<[f32; 2]>,
     y_label: String,
@@ -40,6 +44,7 @@ impl Default for SVGFigure {
             width: 1000,
             height: 750,
             axis_pad: 50,
+            chart_style: ChartStyle::ScatterLine,
             x_label: "".to_string(),
             x_limits: None,
             y_label: "".to_string(),
@@ -102,6 +107,13 @@ impl SVGFigure {
     /// Assign legend labels
     pub fn assign_legend(&mut self, legend_names: &Vec<String>) {
         self.legend_names = Some(legend_names.clone());
+    }
+
+    pub fn render(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
+        match self.chart_style {
+            ChartStyle::ScatterLine =>
+                self.render_scatterline(file_name),
+        }
     }
     
     // Append drawn axis elements to render_string (private function)
@@ -209,8 +221,8 @@ impl SVGFigure {
         }
     }
 
-    /// Compile plot data into file_name.svg and open the image
-    pub fn render(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
+    /// Compile scatter/line plot data into file_name.svg and open the image
+    fn render_scatterline(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
         // Define point marker size
         let point_r: i32 = 3;
 
@@ -332,22 +344,24 @@ impl SVGFigure {
                 render_string.push_str(&point_string);
             }
 
-            // Start polyline element
-            render_string.push_str(&format!(r#"<polyline fill="none" stroke="{}" stroke-width="{}" points=" "#,
-                self.plot_styles[data_idx].stroke_color,
-                self.plot_styles[data_idx].stroke_width
-            ));
+            if self.plot_styles[data_idx].stroke_width > 0 {
+                // Start polyline element
+                render_string.push_str(&format!(r#"<polyline fill="none" stroke="{}" stroke-width="{}" points=" "#,
+                    self.plot_styles[data_idx].stroke_color,
+                    self.plot_styles[data_idx].stroke_width
+                ));
 
-            // Compile mapped pixel values into single string series
-            let polyline_points_string: String = (0..mapped_x.len())
-                .map(|subidx| format!("{},{} ", mapped_x[subidx], mapped_y[subidx]))
-                .collect::<String>();
+                // Compile mapped pixel values into single string series
+                let polyline_points_string: String = (0..mapped_x.len())
+                    .map(|subidx| format!("{},{} ", mapped_x[subidx], mapped_y[subidx]))
+                    .collect::<String>();
 
-            // Push pixel string to polyline element
-            render_string.push_str(&polyline_points_string);
+                // Push pixel string to polyline element
+                render_string.push_str(&polyline_points_string);
 
-            // Close polyline element
-            render_string.push_str("\"/>");
+                // Close polyline element
+                render_string.push_str("\"/>");               
+            }
         }
 
         if self.legend_names.is_some() {
