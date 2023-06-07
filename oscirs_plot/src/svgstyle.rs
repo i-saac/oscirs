@@ -22,3 +22,12 @@ impl Default for SVGStyle {
         }
     }
 }
+
+pub fn scatter_style(color: Color) -> SVGStyle {
+    SVGStyle {
+        stroke_color: color,
+        stroke_width: 0,
+        has_markers: true,
+        ..Default::default()
+    }
+}

@@ -14,6 +14,10 @@ pub mod svgplot_core {
     pub use crate::svgstyle::SVGStyle;
 }
 
+pub enum ChartStyle {
+    ScatterLine
+}
+
 /// Enum of plotting colors
 #[derive(Clone)]
 pub enum Color {
