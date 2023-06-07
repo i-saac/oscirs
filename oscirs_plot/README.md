@@ -10,12 +10,12 @@ This crate focuses on plotting data based on float vectors. It currently only su
 
 ## Use
 
-For a quick start, import everything from svgplot_core and initialize a new figure. Use the default constructor, you can change properties later if needed. Make the figure variable mutable, as it will be dynamically storing data series internally. 
+For a quick start, import everything from svgplot_core and initialize a new figure. Use the default constructor and create a `Scatterline` object. Make the figure variable mutable, as it will be dynamically storing data series internally. 
 
 ```rust
 use oscirs_plot::svgplot_core::*;
 
-let mut figure: SVGFigure = SVGFigure::default();
+let mut figure: Scatterline = Scatterline::default();
 ```
 
 Once we have a figure, we can set the axis labels and the figure title.
@@ -37,12 +37,13 @@ let y: Vec<f32> = x.clone()
     .map(|x| x.sqrt())
     .collect();
 
-let mut style: SVGStyle = SVGStyle {
+let mut style: PlotStyle = PlotStyle {
     stroke_color: Color::Blue,
     ..Default::default()
 };
 
-figure.add_data(&x, &y, &style);
+figure.add_data(&x, &y, &style)
+    .expect("Failed to add data series");
 ```
 
 We can also create scatter plots by specifying a stroke width of 0 and turning markers on. Lets add a scatter series of the line y=x.
@@ -54,7 +55,8 @@ style.stroke_color = Color::Red;
 style.stroke_width = 0;
 style.has_markers = true;
 
-figure.add_data(&x, &y2, &style);
+figure.add_data(&x, &y2, &style)
+    .expect("Failed to add data series");
 ```
 
 To display our plot, we just need to call `render()` on our figure and specify a file name. The .svg file will be auto-generated and will open at the end of the writing process.

@@ -4,19 +4,20 @@
 
 use std::fmt;
 
-pub mod svgfigure;
-pub mod svgstyle;
+pub mod err;
+pub mod svg;
+pub mod style;
 
 /// Simplified svgplot module to clean up imports and get you plotting quickly
 pub mod svgplot_core {
     pub use crate::Color;
-    pub use crate::svgfigure::SVGFigure;
-    pub use crate::svgstyle::SVGStyle;
+    pub use crate::svg::scatterline::Scatterline;
+    pub use crate::svg::bar::Bar;
+    pub use crate::style::PlotStyle;
 }
 
-pub enum ChartStyle {
-    ScatterLine
-}
+/// Custom result type using PlotError
+pub type PlotResult<T> = Result<T, err::PlotError>;
 
 /// Enum of plotting colors
 #[derive(Clone)]
