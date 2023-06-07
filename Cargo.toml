@@ -13,5 +13,5 @@ license = "Apache-2.0"
 
 [dependencies]
 oscirs_linalg = { version = "0.2.0-alpha.1", path="oscirs_linalg" }
-oscirs_plot = { version = "0.1.1", path="oscirs_plot" }
+oscirs_plot = { version = "0.2.0-alpha", path="oscirs_plot" }
 oscirs_stats = { version = "0.1.1", path="oscirs_stats" }
