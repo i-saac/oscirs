@@ -1,7 +1,7 @@
 use oscirs_linalg::LAResult;
 use oscirs_linalg::err::LAError;
 use oscirs_linalg::matrix::{
-    self,
+    new_matrix,
     Matrix
 };
 use oscirs_linalg::calculator::{
@@ -64,9 +64,9 @@ fn matrix_ewmult_custom() {
     
     let c_vec: Vec<f32> = vec![2.0, 2.0, 6.0, 12.0, 10.0, 6.0];
 
-    let a_mat: Matrix = matrix::new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
-    let b_mat: Matrix = matrix::new_matrix(b_vec, 2, 3)
+    let b_mat: Matrix = new_matrix(b_vec, 2, 3)
         .expect("Failed to create Matrix B");
 
     let a_idx: usize = calc.store_matrix(a_mat)
@@ -102,9 +102,9 @@ fn matrix_multiplication() {
     let e_vec: Vec<f32> = vec![6.0, 9.0, 12.0, 14.0, 19.0, 24.0, 6.0, 9.0, 12.0];
     let f_vec: Vec<f32> = vec![54.0, 45.0, 114.0, 95.0, 54.0, 45.0];
 
-    let a_mat: Matrix = matrix::new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
-    let b_mat: Matrix = matrix::new_matrix(b_vec, 3, 2)
+    let b_mat: Matrix = new_matrix(b_vec, 3, 2)
         .expect("Failed to create Matrix B");
 
     let a_idx: usize = calc.store_matrix(a_mat)
@@ -139,4 +139,65 @@ fn matrix_multiplication() {
     assert_eq!(f_mat.get_data(), f_vec, "Matrix F data not as expected");
     assert_eq!(f_mat.get_rows(), 3, "Matrix F row dimension not as expected");
     assert_eq!(f_mat.get_cols(), 2, "Matrix F col dimension not as expected");
+}
+
+#[test]
+fn matrix_indexing() {
+    let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+
+    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+        .expect("Failed to create Matrix A");
+
+    assert_eq!(a_mat[[1, 1]], 5.0, "Indexed value not as expected");
+    assert_eq!(a_mat.row(1).expect("Failed to index row"), vec![4.0, 5.0, 6.0], "Indexed row not as expected");
+    assert_eq!(a_mat.col(2).expect("Failed to index col"), vec![3.0, 6.0], "Indexed col not as expected");
+}
+
+#[test]
+fn cpu_operations() {
+    let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
+    let b_vec: Vec<f32> = vec![2.0, 1.0, 2.0, 3.0, 2.0, 1.0];
+
+    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+        .expect("Failed to create Matrix A");
+    let b_mat: Matrix = new_matrix(b_vec, 2, 3)
+        .expect("Failed to create Matrix B");
+
+    let b_transpose_vec: Vec<f32> = vec![2.0, 3.0, 1.0, 2.0, 2.0, 1.0];
+    let b_transpose: Matrix = b_mat.transpose();
+    assert_eq!(b_transpose.get_data(), b_transpose_vec, "Transpose data not as expected");
+    assert_eq!(b_transpose.get_rows(), 3, "Transpose row dimension not as expected");
+    assert_eq!(b_transpose.get_cols(), 2, "Transpose col dimension not as expected");
+
+    let value: f32 = 2.0;
+
+    let fladd_vec: Vec<f32> = vec![3.0, 4.0, 5.0, 6.0, 7.0, 8.0];
+    let fladd_mat: Matrix = a_mat.clone() + value;
+    assert_eq!(fladd_mat.get_data(), fladd_vec, "Matrix-Float addition not as expected");
+
+    let add_vec: Vec<f32> = vec![3.0, 3.0, 5.0, 7.0, 7.0, 7.0];
+    let add_mat: Matrix = (a_mat.clone() + b_mat.clone()).expect("Failed to add Matrix A and Matrix B");
+    assert_eq!(add_mat.get_data(), add_vec, "Matrix-Matrix addition not as expected");
+
+    let neg_vec: Vec<f32> = vec![-1.0, -2.0, -3.0, -4.0, -5.0, -6.0];
+    let neg_mat: Matrix = -a_mat.clone();
+    assert_eq!(neg_mat.get_data(), neg_vec, "Matrix negation not as expected");
+
+    let flsub_vec: Vec<f32> = vec![-1.0, 0.0, 1.0, 2.0, 3.0, 4.0];
+    let flsub_mat: Matrix = a_mat.clone() - value;
+    assert_eq!(flsub_mat.get_data(), flsub_vec, "Matrix-Float subtraction not as expected");
+
+    let sub_vec: Vec<f32> = vec![-1.0, 1.0, 1.0, 1.0, 3.0, 5.0];
+    let sub_mat: Matrix = (a_mat.clone() - b_mat).expect("Failed to subtract Matrix B from Matrix A");
+    assert_eq!(sub_mat.get_data(), sub_vec, "Matrix-Matrix subtraction not as expected");
+
+    let flmul_vec: Vec<f32> = vec![2.0, 4.0, 6.0, 8.0, 10.0, 12.0];
+    let flmul_mat: Matrix = value * a_mat.clone();
+    assert_eq!(flmul_mat.get_data(), flmul_vec, "Matrix-Float multiplication not as expected");
+
+    let mul_vec: Vec<f32> = vec![10.0, 10.0, 25.0, 28.0];
+    let mul_mat: Matrix = (a_mat * b_transpose).expect("Failed to multiply Matrix A by Matrix B");
+    assert_eq!(mul_mat.get_data(), mul_vec, "Matrix-Matrix multiplication data not as expected");
+    assert_eq!(mul_mat.get_rows(), 2, "Matrix-Matrix multiplication row dimension not as expected");
+    assert_eq!(mul_mat.get_cols(), 2, "Matrix-Matrix multiplication col dimension not as expected");
 }
