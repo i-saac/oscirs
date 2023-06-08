@@ -1,10 +1,13 @@
-#![cfg(feature = "test_stats")]
+#![cfg(feature = "stats")]
 
 use oscirs_stats::StatFuncs;
 use oscirs_stats::summaries::{
     FiveNumber,
-    Normal
+    Normal,
+    Sample
 };
+
+use oscirs::stats::t_test::*;
 
 #[test]
 fn five_number_test() {
@@ -45,4 +48,18 @@ fn normal_test() {
     assert_eq!(normal.mean.ceil(), 34.0);
     assert_eq!(normal.std_dev.floor(), 15.0);
     assert_eq!(normal.std_dev.ceil(), 16.0);
+}
+
+#[test]
+fn t_test_test() {
+    let input_vec: Vec<f32> = ([6, 7, 15, 36, 39, 40, 41, 42, 43, 47, 49])
+        .map(|x| x as f32)
+        .to_vec();
+
+    let sample_summary: Sample = input_vec.sample();
+
+    let prob: f32 = single_t_test(42.0, sample_summary, TTestType::TestNotEqual)
+        .expect("Failed to perform single sample t test");
+
+    assert!(0.095 < prob && prob < 0.098, "Probability not as expected");
 }

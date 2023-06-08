@@ -2,7 +2,7 @@
 
 use std::ops;
 
-use crate::LAResult;
+use crate::Result;
 use crate::err::LAError;
 
 /// Matrix object definition
@@ -14,7 +14,7 @@ pub struct Matrix {
 }
 
 /// Create new matrix (includes checking for matching number of elements)
-pub fn new_matrix(input_data: Vec<f32>, rows: usize, cols: usize) -> LAResult<Matrix> {
+pub fn new_matrix(input_data: Vec<f32>, rows: usize, cols: usize) -> Result<Matrix> {
     let vec_len: usize = input_data.len(); // Get input_data length
     let comp_len: usize = rows * cols; // Get projected matrix size
     
@@ -41,7 +41,7 @@ impl Matrix {
     }
 
     /// Resize matrix dimensions (must have same total number of elements)
-    pub fn resize(&mut self, new_rows: usize, new_cols: usize) -> LAResult<()> {
+    pub fn resize(&mut self, new_rows: usize, new_cols: usize) -> Result<()> {
         if (new_rows * new_cols) != self.data.len() {
             return Err(LAError::ResizeError)
         }
@@ -58,7 +58,7 @@ impl Matrix {
     }
 
     /// Update matrix data (must have same total number of elements)
-    pub fn update_data(&mut self, new_data: Vec<f32>) -> LAResult<()> {
+    pub fn update_data(&mut self, new_data: Vec<f32>) -> Result<()> {
         if (self.rows * self.cols) != new_data.len() {
             return Err(LAError::DataUpdateError)
         }
@@ -69,7 +69,7 @@ impl Matrix {
     }
 
     /// Return selected row of self
-    pub fn row(&self, row_idx: usize) -> LAResult<Vec<f32>> {
+    pub fn row(&self, row_idx: usize) -> Result<Vec<f32>> {
         if row_idx >= self.rows {
             return Err(LAError::IndexError)
         }
@@ -85,7 +85,7 @@ impl Matrix {
     }
 
     /// Return selected col of self
-    pub fn col(&self, col_idx: usize) -> LAResult<Vec<f32>> {
+    pub fn col(&self, col_idx: usize) -> Result<Vec<f32>> {
         if col_idx >= self.cols {
             return Err(LAError::IndexError)
         }
@@ -139,9 +139,9 @@ impl ops::Add<f32> for Matrix {
 
 // Add Matrix to Matrix
 impl ops::Add<Matrix> for Matrix {
-    type Output = LAResult<Matrix>;
+    type Output = Result<Matrix>;
 
-    fn add(self, rhs: Matrix) -> LAResult<Matrix> {
+    fn add(self, rhs: Matrix) -> Result<Matrix> {
         if (self.rows != rhs.rows) || (self.cols != rhs.cols) {
             return Err(LAError::SizeError)
         }
@@ -193,9 +193,9 @@ impl ops::Sub<f32> for Matrix {
 
 // Subtract Matrix from Matrix
 impl ops::Sub<Matrix> for Matrix {
-    type Output = LAResult<Matrix>;
+    type Output = Result<Matrix>;
 
-    fn sub(self, rhs: Matrix) -> LAResult<Matrix> {
+    fn sub(self, rhs: Matrix) -> Result<Matrix> {
         self + -rhs
     }
 }
@@ -226,9 +226,9 @@ impl ops::Mul<Matrix> for f32 {
 
 // Multiply Matrix by Matrix
 impl ops::Mul<Matrix> for Matrix {
-    type Output = LAResult<Matrix>;
+    type Output = Result<Matrix>;
 
-    fn mul(self, rhs: Matrix) -> LAResult<Matrix> {
+    fn mul(self, rhs: Matrix) -> Result<Matrix> {
         if self.cols != rhs.rows {
             return Err(LAError::SizeError)
         }

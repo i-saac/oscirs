@@ -1,6 +1,6 @@
-#![cfg(feature = "test_linalg")]
+#![cfg(feature = "linalg")]
 
-use oscirs_linalg::LAResult;
+use oscirs_linalg::Result;
 use oscirs_linalg::err::LAError;
 use oscirs_linalg::matrix::{
     new_matrix,
@@ -34,7 +34,7 @@ fn matrix_ewmult_custom() {
     let new_kernel_name: &str = "mat_ewmult";
 
     let custom_param_function: ParameterFunction = Box::new(
-        | input_mats: Vec<&Matrix> | -> LAResult<(usize, usize, Vec<usize>)> {
+        | input_mats: Vec<&Matrix> | -> Result<(usize, usize, Vec<usize>)> {
             if input_mats.len() != 2 {
                 return Err(LAError::ArgumentError)
             }

@@ -2,7 +2,7 @@
 
 use crate::{
     ApplyFunction,
-    SciResult
+    Result
 };
 use crate::err::SciError;
 
@@ -17,9 +17,9 @@ impl<T> ApplyFunction<T> for Vec<T> {
 /// Discrete trapezoidal integration of dep with respect to ind
 /// 
 /// Assumes sorted inputs
-pub fn integrate(ind: &Vec<f32>, dep: &Vec<f32>) -> SciResult<Vec<f32>> {
+pub fn integrate(ind: &Vec<f32>, dep: &Vec<f32>) -> Result<Vec<f32>> {
     if ind.len() != dep.len() {
-        return Err(SciError::VectorLengthsError)
+        return Err(Box::new(SciError::VectorLengthsError))
     }
 
     let mut output_vec: Vec<f32> = Vec::with_capacity(ind.len());
@@ -35,13 +35,13 @@ pub fn integrate(ind: &Vec<f32>, dep: &Vec<f32>) -> SciResult<Vec<f32>> {
 /// Estimate value of dependent at input extrapolated from ind and dep
 /// 
 /// Assumes sorted inputs
-pub fn linterp(ind: &Vec<f32>, dep: &Vec<f32>, input: f32) -> SciResult<f32> {
+pub fn linterp(ind: &Vec<f32>, dep: &Vec<f32>, input: f32) -> Result<f32> {
     if ind.len() != dep.len() {
-        return Err(SciError::VectorLengthsError)
+        return Err(Box::new(SciError::VectorLengthsError))
     }
 
     if ind[0] > input || input > ind[ind.len() - 1] {
-        return Err(SciError::RangeError)
+        return Err(Box::new(SciError::RangeError))
     }
 
     let mut idx: usize = 0;

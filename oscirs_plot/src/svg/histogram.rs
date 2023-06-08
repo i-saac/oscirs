@@ -4,9 +4,9 @@ extern crate open;
 
 use std::fs::File;
 use std::io::Write;
-use std::error::Error;
 
 use crate::style::PlotStyle;
+use crate::Result;
 
 use super::{
     draw_line,
@@ -115,9 +115,14 @@ impl Histogram {
     }
 
     /// Compile histogram data into file_name.svg and open the image
-    pub fn render(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
+    pub fn render(&self, file_name: &str) -> Result<()> {
         // Header of svg file
-        let mut render_string: String =  format!(r#"<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 {} {}" width="{}" height="{}">"#, self.width + 50, self.height + 50, self.width, self.height);
+        let mut render_string: String =  format!(r#"<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 {} {}" width="{}" height="{}">"#,
+            self.width + 50,
+            self.height + 50,
+            self.width,
+            self.height
+        );
 
         // Draw title
         draw_text(&mut render_string, self.width / 2, self.axis_pad / 2, 0, &self.title, &self.anno_style, "xx-large");
@@ -135,27 +140,33 @@ impl Histogram {
         let limits: [f32; 2] = self.x_limits.unwrap_or([data_min, data_max]);
         let delta: f32 = (limits[1] - limits[0]) / inner_segments as f32;
 
-
+        // Find cumulative frequencies for chunks
         let mut cumulative_frequencies: Vec<usize> = (0..=inner_segments)
             .map(|idx| 
                 (&self.dataset).into_iter()
                     .filter(|&&val| val >= (limits[0] + delta * idx as f32))
                     .count()
             ).collect();
-
+        
+        // Add final chunk
         cumulative_frequencies.push(0);
 
+        // Declare final frequencies vector
         let mut frequencies: Vec<usize> = Vec::with_capacity(self.n_bars);
         
+        // Add first bar
         frequencies.push(self.dataset.len() - cumulative_frequencies[0]);
 
+        // Add subsequent bars
         for idx in 1..cumulative_frequencies.len() {
             frequencies.push(cumulative_frequencies[idx - 1] - cumulative_frequencies[idx])
         }
 
+        // Get maximum number of occurrences in a block
         let max_freq: usize = (&frequencies).into_iter()
             .fold(0, |left, &right| left.max(right));
 
+        // Find number of y ticks based on max frequency
         let mut n_ticks: usize = 1;
         for divisor in (1..=10).rev() {
             if max_freq % divisor == 0 {
@@ -163,21 +174,28 @@ impl Histogram {
             }
         }
 
+        // Draw axes
         self.draw_axes(&mut render_string, limits[0], limits[1], self.y_limit.unwrap_or(max_freq), self.n_y_ticks.unwrap_or(n_ticks));
 
         // Map frequencies from counts to pixel values
         let mapped_freq: Vec<usize> = (0..frequencies.len()).into_iter()
-            .map(|idx| (self.height - self.axis_pad) - (self.axis_pad as f32 + (self.height - 2 * self.axis_pad) as f32 * (frequencies[idx] as f32) / (self.y_limit.unwrap_or(max_freq) as f32)) as usize)
-            .collect::<Vec<usize>>();
+            .map(|idx| 
+                (self.height - self.axis_pad) -
+                (self.axis_pad as f32 + (self.height - 2 * self.axis_pad) as f32 * (frequencies[idx] as f32) / (self.y_limit.unwrap_or(max_freq) as f32)) as usize
+            ).collect::<Vec<usize>>();
 
         // Create plot window sub-image (this is done to auto-clip out of bounds data points)
         render_string.push_str(&format!(r#"<svg width="{}" height="{}" x="{}" y="{}">"#, self.width - 2 * self.axis_pad, self.height - 2 * self.axis_pad, self.axis_pad, self.axis_pad));
-
+        
+        // Calculate bar width
         let bar_width: usize = (self.width - 2 * self.axis_pad) / self.n_bars;
-
+        
+        // Loop through bars
         for bar_idx in 0..self.n_bars {
+            // Determine proportion travelled along axis
             let progression: f32 = bar_idx as f32 / self.n_bars as f32;
 
+            // Draw histogram bars
             render_string.push_str(&format!(r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}" stroke="{}" stroke-width="{}"><title>{}</title></rect>"#,
                 (progression * (self.width - 2 * self.axis_pad) as f32) as usize,
                 mapped_freq[bar_idx],

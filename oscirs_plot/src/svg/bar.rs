@@ -4,9 +4,8 @@ extern crate open;
 
 use std::fs::File;
 use std::io::Write;
-use std::error::Error;
 
-use crate::PlotResult;
+use crate::Result;
 use crate::err::PlotError;
 use crate::style::PlotStyle;
 
@@ -63,15 +62,15 @@ impl Bar {
     }
 
     /// Add bar height data
-    pub fn add_data(&mut self, bar_labels: &Vec<String>, new_data: &Vec<f32>, plot_style: &PlotStyle) -> PlotResult<()> {
+    pub fn add_data(&mut self, bar_labels: &Vec<String>, new_data: &Vec<f32>, plot_style: &PlotStyle) -> Result<()> {
         if bar_labels.len() != new_data.len() {
-            return Err(PlotError::DataLengthError)
+            return Err(Box::new(PlotError::DataLengthError))
         }
 
         if new_data.into_iter()
             .any(|&value| value < 0.0)
         {
-            return Err(PlotError::BoundsError)
+            return Err(Box::new(PlotError::BoundsError))
         }
 
         self.bar_labels = bar_labels.clone();
@@ -87,9 +86,14 @@ impl Bar {
     }
 
     /// Compile bar plot data into file_name.svg and open the image
-    pub fn render(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
+    pub fn render(&self, file_name: &str) -> Result<()> {
         // Header of svg file
-        let mut render_string: String =  format!(r#"<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 {} {}" width="{}" height="{}">"#, self.width + 50, self.height + 50, self.width, self.height);
+        let mut render_string: String =  format!(r#"<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 {} {}" width="{}" height="{}">"#,
+            self.width + 50,
+            self.height + 50,
+            self.width,
+            self.height
+        );
 
         // Draw title
         draw_text(&mut render_string, self.width / 2, self.axis_pad / 2, 0, &self.title, &self.anno_style, "xx-large");
@@ -110,12 +114,14 @@ impl Bar {
 
         // Map y series from plot values to pixel values
         let mapped_y: Vec<usize> = (0..self.y_dataset.len()).into_iter()
-            .map(|idx| (self.height - self.axis_pad) - (self.axis_pad as f32 + (self.height - 2 * self.axis_pad) as f32 * (self.y_dataset[idx] - y_abs_min) / (y_abs_max - y_abs_min)) as usize)
-            .collect::<Vec<usize>>();
+            .map(|idx|
+                (self.height - self.axis_pad) - (self.axis_pad as f32 + (self.height - 2 * self.axis_pad) as f32 * (self.y_dataset[idx] - y_abs_min) / (y_abs_max - y_abs_min)) as usize
+            ).collect::<Vec<usize>>();
 
         // Get number of bars
         let n_bars: usize = self.bar_labels.len();
 
+        // Calculate bar width
         let bar_width: usize = ((self.width - 2 * self.axis_pad) / (n_bars + 2)) - self.bar_pad;
 
         // Loop through bars

@@ -1,9 +1,9 @@
-#![cfg(feature="test_plot")]
+#![cfg(feature = "plot")]
 
 use oscirs_plot::svgplot_core::*;
 
 #[test]
-pub fn scatterline_test() {
+fn scatterline_test() {
     let mut figure: Scatterline = Scatterline::default();
 
     figure.label_x("X axis (unit)");
@@ -27,7 +27,7 @@ pub fn scatterline_test() {
 }
 
 #[test]
-pub fn bar_test() {
+fn bar_test() {
     let mut figure: Bar = Bar::default();
 
     figure.label_y("Y axis (unit)");
@@ -53,7 +53,7 @@ pub fn bar_test() {
 }
 
 #[test]
-pub fn histogram_test() {
+fn histogram_test() {
     let mut figure: Histogram = Histogram::default();
 
     figure.label_x("X axis (unit)");

@@ -17,7 +17,13 @@ fn draw_line(
 ) {
     render_string.push_str(
         &format!(r#"<line x1="{}" y1="{}" x2="{}" y2="{}" fill="{}" stroke="{}" stroke-width="{}"/>"#,
-            x1, y1, x2, y2, style.fill_color, style.stroke_color, style.stroke_width
+            x1,
+            y1,
+            x2,
+            y2,
+            style.fill_color,
+            style.stroke_color,
+            style.stroke_width
         )
     );
 }
@@ -34,7 +40,12 @@ fn draw_text(
 ) {
     render_string.push_str(
         &format!(r#"<text transform="translate({}, {}) rotate({})" color="{}" font-size="{}" dominant-baseline="middle" text-anchor="middle">{}</text>"#,
-            x, y, angle, style.stroke_color, text_size, text
+            x,
+            y,
+            angle,
+            style.stroke_color,
+            text_size,
+            text
         )
     );
 }

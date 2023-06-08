@@ -2,8 +2,9 @@
 
 use crate::StatFuncs;
 use crate::summaries::{
+    FiveNumber,
     Normal,
-    FiveNumber
+    Sample
 };
 
 impl StatFuncs for Vec<f32> {
@@ -22,6 +23,19 @@ impl StatFuncs for Vec<f32> {
             .sqrt();
 
         Normal { mean: mean, std_dev: std_dev }
+    }
+
+    fn sample(&self) -> Sample {
+        let mean: f32 = self.mean();
+
+        let sample_size: usize = self.len();
+
+        let std_dev: f32 = self.into_iter()
+            .map(|x| (x - mean).powi(2) / (sample_size - 1) as f32)
+            .sum::<f32>()
+            .sqrt();
+
+        Sample { sample_mean: mean, sample_std_dev: std_dev, sample_size: sample_size }
     }
     
     fn five_number(&self) -> FiveNumber {

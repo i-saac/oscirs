@@ -4,11 +4,10 @@ extern crate open;
 
 use std::fs::File;
 use std::io::Write;
-use std::error::Error;
 
 use crate::{
     Color,
-    PlotResult
+    Result
 };
 use crate::err::PlotError;
 use crate::style::PlotStyle;
@@ -82,9 +81,9 @@ impl Scatterline {
     }
 
     /// Add scatterline data series
-    pub fn add_data(&mut self, x_data: &Vec<f32>, y_data: &Vec<f32>, plot_style: &PlotStyle) -> PlotResult<()> {
+    pub fn add_data(&mut self, x_data: &Vec<f32>, y_data: &Vec<f32>, plot_style: &PlotStyle) -> Result<()> {
         if x_data.len() != y_data.len() {
-            return Err(PlotError::DataLengthError)
+            return Err(Box::new(PlotError::DataLengthError))
         }
     
         self.x_dataset.push(x_data.clone());
@@ -115,9 +114,9 @@ impl Scatterline {
     }
 
     /// Assign legend labels
-    pub fn assign_legend(&mut self, legend_names: &Vec<String>) -> PlotResult<()> {
+    pub fn assign_legend(&mut self, legend_names: &Vec<String>) -> Result<()> {
         if legend_names.len() != self.x_dataset.len() {
-            return Err(PlotError::DataLengthError)
+            return Err(Box::new(PlotError::DataLengthError))
         }
 
         self.legend_names = Some(legend_names.clone());
@@ -126,12 +125,17 @@ impl Scatterline {
     }
 
     /// Compile scatterline plot data into file_name.svg and open the image
-    pub fn render(&self, file_name: &str) -> Result<(), Box<dyn Error>> {
+    pub fn render(&self, file_name: &str) -> Result<()> {
         // Define point marker size
         let point_r: usize = 3;
 
         // Header of svg file
-        let mut render_string: String = format!(r#"<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 {} {}" width="{}" height="{}">"#, self.width + 50, self.height + 50, self.width, self.height);
+        let mut render_string: String =  format!(r#"<!DOCTYPE svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="-50 -50 {} {}" width="{}" height="{}">"#,
+            self.width + 50,
+            self.height + 50,
+            self.width,
+            self.height
+        );
 
         // Draw title
         draw_text(&mut render_string, self.width / 2, self.axis_pad / 2, 0, &self.title, &self.anno_style, "xx-large");
@@ -225,13 +229,16 @@ impl Scatterline {
 
             // Map x series from plot values to pixel values
             let mapped_x: Vec<usize> = (0..x_data.len()).into_iter()
-                .map(|idx| ((self.width - 2 * self.axis_pad) as f32 * (x_data[idx] - x_abs_min) / (x_abs_max - x_abs_min)) as usize)
-                .collect::<Vec<usize>>();
+                .map(|idx|
+                    ((self.width - 2 * self.axis_pad) as f32 * (x_data[idx] - x_abs_min) / (x_abs_max - x_abs_min)) as usize
+                ).collect::<Vec<usize>>();
             
             // Map y series from plot values to pixel values
             let mapped_y: Vec<usize> = (0..x_data.len()).into_iter()
-                .map(|idx| (self.height - self.axis_pad) - (self.axis_pad as f32 + (self.height - 2 * self.axis_pad) as f32 * (y_data[idx] - y_abs_min) / (y_abs_max - y_abs_min)) as usize)
-                .collect::<Vec<usize>>();
+                .map(|idx|
+                    (self.height - self.axis_pad) -
+                    (self.axis_pad as f32 + (self.height - 2 * self.axis_pad) as f32 * (y_data[idx] - y_abs_min) / (y_abs_max - y_abs_min)) as usize
+                ).collect::<Vec<usize>>();
             
             // Draw data markers (title allows for label when hovered over in browser)
             if self.plot_styles[data_idx].has_markers {

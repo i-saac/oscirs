@@ -19,6 +19,14 @@ pub struct Normal {
     pub std_dev: f32
 }
 
+/// Sample property description struct
+#[derive(Debug)]
+pub struct Sample {
+    pub sample_mean: f32,
+    pub sample_std_dev: f32,
+    pub sample_size: usize
+}
+
 impl Normal {
     /// Convert normal distribution into discrete vectors
     pub fn to_distribution(&self) -> (Vec<f32>, Vec<f32>) {

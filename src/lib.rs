@@ -2,15 +2,27 @@
 //! 
 //! A scientific computing environment for Rust
 
+use std::error::Error;
+use std::result;
+
+#[cfg(feature = "linalg")]
 extern crate oscirs_linalg;
+
+#[cfg(feature = "plot")]
 extern crate oscirs_plot;
+
+#[cfg(feature = "stats")]
 extern crate oscirs_stats;
 
 pub mod err;
+pub mod math;
 pub mod vector;
 
-/// Custom result type using SciError
-pub type SciResult<T> = Result<T, err::SciError>;
+#[cfg(feature = "stats")]
+pub mod stats;
+
+/// Custom result type
+pub type Result<T> = result::Result<T, Box<dyn Error>>;
 
 /// Macro for executing a closure on an object more easily
 pub trait ApplyFunction<T> {

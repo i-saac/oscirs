@@ -1,4 +1,4 @@
-# oscirs-linalg
+# oscirs_linalg
 
 [![crates.io](https://shields.io/crates/v/oscirs_linalg)](https://crates.io/crates/oscirs_linalg)
 

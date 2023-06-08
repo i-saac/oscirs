@@ -3,6 +3,8 @@
 //! A plotting library for Rust
 
 use std::fmt;
+use std::error::Error;
+use std::result;
 
 pub mod err;
 pub mod svg;
@@ -17,8 +19,8 @@ pub mod svgplot_core {
     pub use crate::style::PlotStyle;
 }
 
-/// Custom result type using PlotError
-pub type PlotResult<T> = Result<T, err::PlotError>;
+/// Custom result type
+pub type Result<T> = result::Result<T, Box<dyn Error>>;
 
 /// Enum of plotting colors
 #[derive(Clone)]
