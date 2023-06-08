@@ -35,14 +35,14 @@ pub struct MemoryHandler {
     last_write_event: Option<Event> // Last write event object
 }
 
-use crate::LAResult;
+use crate::Result;
 use crate::err::LAError;
 use crate::matrix::{
     new_matrix,
     Matrix
 };
 
-pub fn new_memory_handler(program_source: &str, kernel_names: Vec<&str>) -> LAResult<MemoryHandler> {
+pub fn new_memory_handler(program_source: &str, kernel_names: Vec<&str>) -> Result<MemoryHandler> {
     // Get devices and create device object
     let device_id = *get_all_devices(CL_DEVICE_TYPE_GPU)?
         .first()
@@ -92,7 +92,7 @@ pub fn new_memory_handler(program_source: &str, kernel_names: Vec<&str>) -> LARe
 
 impl MemoryHandler {
     // Create buffer and store matrix in buffer
-    pub fn store_matrix(&mut self, matrix: Matrix) -> LAResult<usize> {
+    pub fn store_matrix(&mut self, matrix: Matrix) -> Result<usize> {
         if matrix.get_rows() * matrix.get_cols() != matrix.get_data().len() {
             return Err(LAError::MatrixMismatchError)
         }
@@ -136,7 +136,7 @@ impl MemoryHandler {
         output_rows: usize,
         output_cols: usize,
         work_sizes: Vec<usize>
-    ) -> LAResult<(Matrix, usize)>
+    ) -> Result<(Matrix, usize)>
     {
         // Create read buffer
         let read_buffer: Buffer<f32> = unsafe {
@@ -231,7 +231,7 @@ impl MemoryHandler {
         Ok((output, output_idx))
     }
 
-    pub fn new_kernel(&mut self, program_source: &str, kernel_name: &str) -> LAResult<usize> {
+    pub fn new_kernel(&mut self, program_source: &str, kernel_name: &str) -> Result<usize> {
         // Compile program from source
         let program: Program = Program::create_and_build_from_source(
             &self.context,

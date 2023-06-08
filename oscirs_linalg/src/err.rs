@@ -10,6 +10,7 @@ use opencl3::error_codes::ClError;
 pub enum LAError {
     ArgumentError,
     DataUpdateError,
+    IndexError,
     MatrixMismatchError,
     MemoryError,
     ResizeError,
@@ -26,6 +27,8 @@ impl fmt::Display for LAError {
                 write!(f, "Too many or too few arguments provided"),
             LAError::DataUpdateError =>
                 write!(f, "New data vector has invalid length for current matrix dimensions"),
+            LAError::IndexError =>
+                write!(f, "Index out of bounds for requested operation"),
             LAError::MatrixMismatchError =>
                 write!(f, "Matrix dimensions are not consistent with data vector length"),
             LAError::MemoryError =>

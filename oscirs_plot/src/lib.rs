@@ -3,16 +3,24 @@
 //! A plotting library for Rust
 
 use std::fmt;
+use std::error::Error;
+use std::result;
 
-pub mod svgfigure;
-pub mod svgstyle;
+pub mod err;
+pub mod svg;
+pub mod style;
 
 /// Simplified svgplot module to clean up imports and get you plotting quickly
 pub mod svgplot_core {
     pub use crate::Color;
-    pub use crate::svgfigure::SVGFigure;
-    pub use crate::svgstyle::SVGStyle;
+    pub use crate::svg::scatterline::Scatterline;
+    pub use crate::svg::bar::Bar;
+    pub use crate::svg::histogram::Histogram;
+    pub use crate::style::PlotStyle;
 }
+
+/// Custom result type
+pub type Result<T> = result::Result<T, Box<dyn Error>>;
 
 /// Enum of plotting colors
 #[derive(Clone)]

@@ -10,12 +10,20 @@ oscirs (pronounced like the Egyptian deity Osiris) is my attempt at a scientific
 
 ## oscirs_linalg
 
-This crate focuses on Linear Algebra via the `Matrix` struct.
+This crate focuses on Linear Algebra via the `Matrix` struct. To use this crate and any interactions added by oscirs, use the "linalg" feature in your Cargo.toml dependency line.
 
 ## oscirs_plot
 
-This crate focuses on plotting data
+This crate focuses on plotting data. To use this crate and any interactions added by oscirs, use the "plot" feature in your Cargo.toml dependency line.
 
 ## oscirs_stats
 
-This crate focuses on statistical analysis.
+This crate focuses on statistical analysis. To use this crate and any interactions added by oscirs, use the "stats" feature in your Cargo.toml dependency line.
+
+## Use
+
+The parent oscirs crate focuses on wrapping some utility functions with interactions between the three crates listed above. For example, you can perform a t-test on a sample using oscirs in combination with oscirs_stats.
+
+### Features
+
+oscirs as a crate is still being worked on, so some features are subject to change. For example, the beta and gamma functions are not as accurate as I would like them to be, which influences the output of the t-test probabilities. Please bear with me as I work through these growing pains.

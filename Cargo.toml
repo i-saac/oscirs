@@ -1,6 +1,6 @@
 [package]
 name = "oscirs"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 description = "Scientific computing environment for Rust"
 readme = "README.md"
@@ -12,6 +12,12 @@ license = "Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-oscirs_linalg = { version = "0.1.1", path="oscirs_linalg" }
-oscirs_plot = { version = "0.1.1", path="oscirs_plot" }
-oscirs_stats = { version = "0.1.1", path="oscirs_stats" }
+oscirs_linalg = { version = "0.2.0", path="oscirs_linalg", optional = true }
+oscirs_plot = { version = "0.2.0", path="oscirs_plot", optional = true }
+oscirs_stats = { version = "0.2.0", path="oscirs_stats", optional = true}
+
+[features]
+linalg = ["dep:oscirs_linalg"]
+plot = ["dep:oscirs_plot"]
+stats = ["dep:oscirs_stats"]
+all = ["linalg", "plot", "stats"]

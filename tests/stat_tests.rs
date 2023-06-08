@@ -1,10 +1,13 @@
+#![cfg(feature = "stats")]
+
 use oscirs_stats::StatFuncs;
 use oscirs_stats::summaries::{
     FiveNumber,
-    Normal
+    Normal,
+    Sample
 };
-use oscirs_plot::svgplot_core::*;
-use oscirs::vector::integrate;
+
+use oscirs::stats::t_test::*;
 
 #[test]
 fn five_number_test() {
@@ -48,59 +51,15 @@ fn normal_test() {
 }
 
 #[test]
-fn normal_dist_test() {
-    let mut figure: SVGFigure = SVGFigure::default();
-
-    figure.label_x("X");
-    figure.label_y("P");
-    figure.title("Normal Distribution");
-
-    let mut style: SVGStyle = SVGStyle {
-        stroke_color: Color::Red,
-        ..Default::default()
-    };
-
-    let normal_vals: Normal = Normal {
-        mean: 0.0,
-        std_dev: 1.0
-    };
-
-    let (x_vec, p_vec) = normal_vals.to_distribution();
-
-    figure.add_data(&x_vec, &p_vec, &style);
-
-    let integral: Vec<f32> = integrate(&x_vec, &p_vec)
-        .expect("Failed to integrate p_vec with respect to x_vec");
-    
-    style.stroke_color = Color::Blue;
-
-    figure.add_data(&x_vec, &integral, &style);
-
-    let normal_vals_2 = Normal {
-        mean: 2.0, 
-        std_dev: 2.0
-    };
-
-    let (x_vec_2, p_vec_2) = normal_vals_2.to_distribution();
-
-    style.stroke_color = Color::Green;
-
-    figure.add_data(&x_vec_2, &p_vec_2, &style);
-
-    let integral_2: Vec<f32> = integrate(&x_vec_2, &p_vec_2)
-        .expect("Failed to integrate p_vec_2 with respect to x_vec_2");
-
-    style.stroke_color = Color::Pink;
-
-    figure.add_data(&x_vec_2, &integral_2, &style);
-
-    figure.set_xlims(-4.5, 4.5);
-    figure.set_ylims(0.0, 1.0);
-
-    let legend_names = (["Normal 1", "CDF 1", "Normal 2", "CDF 2"])
-        .map(|entry| entry.to_string())
+fn t_test_test() {
+    let input_vec: Vec<f32> = ([6, 7, 15, 36, 39, 40, 41, 42, 43, 47, 49])
+        .map(|x| x as f32)
         .to_vec();
-    figure.assign_legend(&legend_names);
 
-    figure.render("normal_dist_test").expect("Failed to generate figure");
+    let sample_summary: Sample = input_vec.sample();
+
+    let prob: f32 = single_t_test(42.0, sample_summary, TTestType::TestNotEqual)
+        .expect("Failed to perform single sample t test");
+
+    assert!(0.095 < prob && prob < 0.098, "Probability not as expected");
 }

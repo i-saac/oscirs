@@ -4,7 +4,7 @@
 //! 
 //! Includes support for compilation and execution of custom kernels
 
-use crate::LAResult;
+use crate::Result;
 use crate::err::LAError;
 use crate::matrix::Matrix;
 use crate::memory::{
@@ -21,10 +21,10 @@ type ResultFunction = Box<dyn Fn(
     usize,
     usize,
     Vec<usize>
-) -> LAResult<(Matrix, usize)>>;
+) -> Result<(Matrix, usize)>>;
 
 /// Shortcut type definition for closure defining output parameters for custom kernel
-pub type ParameterFunction = Box<dyn Fn(Vec<&Matrix>) -> LAResult<(usize, usize, Vec<usize>)>>;
+pub type ParameterFunction = Box<dyn Fn(Vec<&Matrix>) -> Result<(usize, usize, Vec<usize>)>>;
 
 /// Wrapper that manages storage of matrices and custom kernels and manages calculation operations
 pub struct Calculator {
@@ -36,7 +36,7 @@ pub struct Calculator {
 }
 
 /// Initializes Calculator struct
-pub fn init() -> LAResult<Calculator> {
+pub fn init() -> Result<Calculator> {
     // Initialize vector of kernel names
     let program_vec: Vec<&str> = super::PROGRAM_LIST.to_vec();
     
@@ -63,7 +63,7 @@ pub fn init() -> LAResult<Calculator> {
 
 impl Calculator {
     /// Store matrix to calculator and gpu memory
-    pub fn store_matrix(&mut self, matrix: Matrix) -> LAResult<usize> {
+    pub fn store_matrix(&mut self, matrix: Matrix) -> Result<usize> {
         // Store matrix to calculator memory
         self.matrices.push(matrix.clone());
 
@@ -80,7 +80,7 @@ impl Calculator {
     }
 
     /// Multiply Matrix and Matrix
-    pub fn mat_mul(&mut self, left_idx: usize, right_idx: usize) -> LAResult<(Matrix, usize)> {
+    pub fn mat_mul(&mut self, left_idx: usize, right_idx: usize) -> Result<(Matrix, usize)> {
         let left: &Matrix = &self.matrices[left_idx];
         let right: &Matrix = &self.matrices[right_idx];
 
@@ -113,7 +113,7 @@ impl Calculator {
         program_source: &str,
         kernel_name: &str,
         parameter_fn: ParameterFunction
-    ) -> LAResult<usize>
+    ) -> Result<usize>
     {
         let new_kernel_index: usize = self.memory_handler.new_kernel(program_source, kernel_name)?;
         self.custom_idcs.push(new_kernel_index);
@@ -129,7 +129,7 @@ impl Calculator {
                 output_rows: usize,
                 output_cols: usize,
                 work_sizes: Vec<usize>
-            | -> LAResult<(Matrix, usize)>
+            | -> Result<(Matrix, usize)>
             {
                 let (output, output_idx) = host.execute_and_read(
                     index,
@@ -157,7 +157,7 @@ impl Calculator {
         input_floats: Option<Vec<f32>>,
         input_ints: Option<Vec<i32>>,
         input_mat_idcs: Vec<usize>
-    ) -> LAResult<(Matrix, usize)>
+    ) -> Result<(Matrix, usize)>
     {
         let input_matrices: Vec<&Matrix> = input_mat_idcs
             .clone()

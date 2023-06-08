@@ -2,13 +2,17 @@
 //! 
 //! A linear algebra crate for Rust
 
+use std::result;
+
+use err::LAError;
+
 pub mod err;
 pub mod calculator;
 pub mod matrix;
 mod memory;
 
-/// Custom result type using LAError
-pub type LAResult<T> = Result<T, err::LAError>;
+/// Custom result type
+pub type Result<T> = result::Result<T, LAError>;
 
 /// Default amount of memory slots for matrices in MemoryHandler and Calculator
 const INIT_MEMORY_CAPACITY: usize = 3;

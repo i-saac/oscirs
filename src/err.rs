@@ -7,6 +7,7 @@ use std::error;
 #[derive(Debug)]
 pub enum SciError {
     DimensionsError,
+    RangeError,
     VectorLengthsError,
     OtherError(String)
 }
@@ -16,6 +17,8 @@ impl fmt::Display for SciError {
         match self {
             SciError::DimensionsError =>
                 write!(f, "Given dimensions not valid for requested operation"),
+            SciError::RangeError =>
+                write!(f, "Given value is not in range of given vector"),
             SciError::VectorLengthsError =>
                 write!(f, "Input vector lengths not valid for requested operation"),
             SciError::OtherError(error) =>
