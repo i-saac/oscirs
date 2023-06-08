@@ -1,4 +1,4 @@
-//! Plotting and .svg-based scatterline figure generation
+//! .svg-based scatterline figure generation
 
 extern crate open;
 

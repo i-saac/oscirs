@@ -13,6 +13,7 @@ pub mod svgplot_core {
     pub use crate::Color;
     pub use crate::svg::scatterline::Scatterline;
     pub use crate::svg::bar::Bar;
+    pub use crate::svg::histogram::Histogram;
     pub use crate::style::PlotStyle;
 }
 

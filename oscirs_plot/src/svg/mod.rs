@@ -2,6 +2,7 @@
 
 pub mod scatterline;
 pub mod bar;
+pub mod histogram;
 
 use crate::style::PlotStyle;
 

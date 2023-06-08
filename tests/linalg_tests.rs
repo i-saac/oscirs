@@ -1,3 +1,5 @@
+#![cfg(feature = "test_linalg")]
+
 use oscirs_linalg::LAResult;
 use oscirs_linalg::err::LAError;
 use oscirs_linalg::matrix::{

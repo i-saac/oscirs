@@ -81,7 +81,7 @@ impl Bar {
         Ok(())
     }
 
-    /// Set y axis limits
+    /// Set y axis maximum
     pub fn set_ymax(&mut self, upper_lim: f32) {
         self.y_limit = Some(upper_lim);
     }
@@ -94,7 +94,7 @@ impl Bar {
         // Draw title
         draw_text(&mut render_string, self.width / 2, self.axis_pad / 2, 0, &self.title, &self.anno_style, "xx-large");
 
-        // Find minimum of y_dataset
+        // Find maximum of y_dataset
         let y_data_max: f32 = (&self.y_dataset).into_iter()
             .fold(f32::NEG_INFINITY, |left, &right| left.max(right));
 
@@ -103,7 +103,7 @@ impl Bar {
         let y_abs_max: f32 = self.y_limit.unwrap_or(y_data_max);
 
         // Draw axes
-        self.draw_axes(&mut render_string, y_abs_min, y_abs_max);
+        self.draw_axes(&mut render_string, y_abs_max);
 
         // Create plot window sub-image (this is done to auto-clip out of bounds data points)
         render_string.push_str(&format!(r#"<svg width="{}" height="{}" x="{}" y="{}">"#, self.width - 2 * self.axis_pad, self.height - 2 * self.axis_pad, self.axis_pad, self.axis_pad));
@@ -136,7 +136,7 @@ impl Bar {
                 self.plot_style.stroke_color,
                 self.plot_style.stroke_width,
                 self.y_dataset[bar_idx]
-            ))
+            ));
         }
 
         // Close out svg file
@@ -157,7 +157,7 @@ impl Bar {
     }
 
     // Append drawn axis elements to render_string (private function)
-    fn draw_axes(&self, mut render_string: &mut String, y_start: f32, y_end: f32) {
+    fn draw_axes(&self, mut render_string: &mut String, y_end: f32) {
         // Half of axis tick mark length
         let tick_r: usize = 6;
 
@@ -198,7 +198,7 @@ impl Bar {
             let y_tick_loc: usize = self.height - (self.axis_pad + (progression * (self.height - 2 * self.axis_pad) as f32) as usize);
 
             // Calculate tick mark label value
-            let y_tick_val: f32 = y_start + progression * (y_end - y_start);
+            let y_tick_val: f32 = progression * y_end;
 
             // Draw axis tick mark
             draw_line(&mut render_string, self.axis_pad - tick_r, y_tick_loc, self.axis_pad + tick_r, y_tick_loc, &self.anno_style);

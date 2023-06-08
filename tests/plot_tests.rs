@@ -1,3 +1,5 @@
+#![cfg(feature="test_plot")]
+
 use oscirs_plot::svgplot_core::*;
 
 #[test]
@@ -48,4 +50,28 @@ pub fn bar_test() {
     figure.set_ymax(6.0);
 
     figure.render("bar_test").expect("Failed to generate figure");
+}
+
+#[test]
+pub fn histogram_test() {
+    let mut figure: Histogram = Histogram::default();
+
+    figure.label_x("X axis (unit)");
+    figure.label_y("Count");
+    figure.title("Histogram");
+
+    let dataset: Vec<f32> = vec![1.0, 7.0, 3.0, 5.0, 7.0, 3.0, 7.0, 9.0];
+
+    let style: PlotStyle = PlotStyle { 
+        fill_color: Color::Green,
+        ..Default::default()
+    };
+
+    figure.add_data(&dataset, &style);
+
+    figure.set_xlims(2.0, 8.0);
+    figure.set_block_range(2.0);
+    figure.set_ymax(5);
+
+    figure.render("hist_test").expect("Failed to generate figure");
 }

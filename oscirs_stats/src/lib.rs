@@ -2,7 +2,7 @@
 //! 
 //! A statistical analysis crate for Rust
 
-pub mod stats_vec;
+pub mod vector;
 pub mod summaries;
 
 /// Trait containing some generic statistical analysis functions
