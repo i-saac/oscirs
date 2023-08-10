@@ -1,23 +1,19 @@
 #[test]
-#[cfg(feature = "linalg")]
 fn linalg_readme() {
-    use oscirs_linalg::matrix::{
-        new_matrix,
-        Matrix
-    };
+    use oscirs_linalg::matrix::Matrix;
     
     let data: Vec<f32> = vec![2.0; 6];
     let n_rows: usize = 2;
     let n_cols: usize = 3;
     
-    let mat: Matrix = new_matrix(data, n_rows, n_cols)
+    let mat: Matrix = Matrix::new(data, n_rows, n_cols)
         .expect("Failed to create mat");
 
     let data_2: Vec<f32> = vec![3.0; 6];
     let n_rows_2: usize = 2;
     let n_cols_2: usize = 3;
 
-    let mat_2: Matrix = new_matrix(data_2, n_rows_2, n_cols_2)
+    let mat_2: Matrix = Matrix::new(data_2, n_rows_2, n_cols_2)
         .expect("Failed to create mat_2");
 
     let result: Matrix = (mat + mat_2)
@@ -27,20 +23,17 @@ fn linalg_readme() {
 
     assert_eq!(result[[1, 1]], 5.0);
 
-    use oscirs_linalg::calculator::{
-        self,
-        Calculator
-    };
+    use oscirs_linalg::calculator::Calculator;
     
-    let mut calc: Calculator = calculator::init()
+    let mut calc: Calculator = Calculator::init()
         .expect("Failed to initialize Calculator");
 
     let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
     let b_vec: Vec<f32> = vec![2.0, 1.0, 2.0, 3.0, 2.0, 1.0];
 
-    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = Matrix::new(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
-    let b_mat: Matrix = new_matrix(b_vec, 3, 2)
+    let b_mat: Matrix = Matrix::new(b_vec, 3, 2)
         .expect("Failed to create Matrix B");
 
     let a_idx: usize = calc.store_matrix(a_mat)
@@ -57,7 +50,6 @@ fn linalg_readme() {
 }
 
 #[test]
-#[cfg(feature = "plot")]
 fn plot_readme() {
     use oscirs_plot::svgplot_core::*;
 
@@ -96,7 +88,6 @@ fn plot_readme() {
 }
 
 #[test]
-#[cfg(feature = "stats")]
 fn stats_readme() {
     use oscirs_stats::summaries_core::*;
 

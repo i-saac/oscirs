@@ -1,5 +1,3 @@
-#![cfg(feature = "stats")]
-
 use oscirs_stats::StatFuncs;
 use oscirs_stats::summaries::{
     FiveNumber,

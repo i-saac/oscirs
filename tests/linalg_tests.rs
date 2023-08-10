@@ -1,20 +1,14 @@
-#![cfg(feature = "linalg")]
-
 use oscirs_linalg::Result;
 use oscirs_linalg::err::LAError;
-use oscirs_linalg::matrix::{
-    new_matrix,
-    Matrix
-};
+use oscirs_linalg::matrix::Matrix;
 use oscirs_linalg::calculator::{
-    self,
     Calculator,
     ParameterFunction
 };
 
 #[test]
 fn matrix_ewmult_custom() {
-    let mut calc: Calculator = calculator::init()
+    let mut calc: Calculator = Calculator::init()
         .expect("Failed to initialize calculator");
 
     let new_program: &str = r#"
@@ -66,9 +60,9 @@ fn matrix_ewmult_custom() {
     
     let c_vec: Vec<f32> = vec![2.0, 2.0, 6.0, 12.0, 10.0, 6.0];
 
-    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = Matrix::new(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
-    let b_mat: Matrix = new_matrix(b_vec, 2, 3)
+    let b_mat: Matrix = Matrix::new(b_vec, 2, 3)
         .expect("Failed to create Matrix B");
 
     let a_idx: usize = calc.store_matrix(a_mat)
@@ -92,7 +86,7 @@ fn matrix_ewmult_custom() {
 
 #[test]
 fn matrix_multiplication() {
-    let mut calc: Calculator = calculator::init()
+    let mut calc: Calculator = Calculator::init()
         .expect("Failed to initialize calculator");
 
     let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
@@ -104,9 +98,9 @@ fn matrix_multiplication() {
     let e_vec: Vec<f32> = vec![6.0, 9.0, 12.0, 14.0, 19.0, 24.0, 6.0, 9.0, 12.0];
     let f_vec: Vec<f32> = vec![54.0, 45.0, 114.0, 95.0, 54.0, 45.0];
 
-    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = Matrix::new(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
-    let b_mat: Matrix = new_matrix(b_vec, 3, 2)
+    let b_mat: Matrix = Matrix::new(b_vec, 3, 2)
         .expect("Failed to create Matrix B");
 
     let a_idx: usize = calc.store_matrix(a_mat)
@@ -147,7 +141,7 @@ fn matrix_multiplication() {
 fn matrix_indexing() {
     let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
 
-    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = Matrix::new(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
 
     assert_eq!(a_mat[[1, 1]], 5.0, "Indexed value not as expected");
@@ -160,9 +154,9 @@ fn cpu_operations() {
     let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
     let b_vec: Vec<f32> = vec![2.0, 1.0, 2.0, 3.0, 2.0, 1.0];
 
-    let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+    let a_mat: Matrix = Matrix::new(a_vec, 2, 3)
         .expect("Failed to create Matrix A");
-    let b_mat: Matrix = new_matrix(b_vec, 2, 3)
+    let b_mat: Matrix = Matrix::new(b_vec, 2, 3)
         .expect("Failed to create Matrix B");
 
     let b_transpose_vec: Vec<f32> = vec![2.0, 3.0, 1.0, 2.0, 2.0, 1.0];

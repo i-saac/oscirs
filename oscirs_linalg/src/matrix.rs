@@ -13,23 +13,23 @@ pub struct Matrix {
     cols: usize // Number of columns
 }
 
-/// Create new matrix (includes checking for matching number of elements)
-pub fn new_matrix(input_data: Vec<f32>, rows: usize, cols: usize) -> Result<Matrix> {
-    let vec_len: usize = input_data.len(); // Get input_data length
-    let comp_len: usize = rows * cols; // Get projected matrix size
-    
-    if vec_len == comp_len { // If provided row and col values are reasonable
-        // Create and return new matrix struct
-        let output: Matrix = Matrix { data: input_data, rows: rows, cols: cols };
-        Ok(output)
-    }
-    else { // If provided row and col values are not reasonable
-        // Return SizeError
-        return Err(LAError::SizeError);
-    }
-}
-
 impl Matrix {
+    /// Create new matrix (includes checking for matching number of elements)
+    pub fn new(input_data: Vec<f32>, rows: usize, cols: usize) -> Result<Matrix> {
+        let vec_len: usize = input_data.len(); // Get input_data length
+        let comp_len: usize = rows * cols; // Get projected matrix size
+        
+        if vec_len == comp_len { // If provided row and col values are reasonable
+            // Create and return new matrix struct
+            let output: Matrix = Matrix { data: input_data, rows: rows, cols: cols };
+            Ok(output)
+        }
+        else { // If provided row and col values are not reasonable
+            // Return SizeError
+            return Err(LAError::SizeError);
+        }
+    }
+
     /// Get number of rows in matrix
     pub fn get_rows(&self) -> usize {
         return self.rows

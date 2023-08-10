@@ -1,5 +1,3 @@
-#![cfg(feature = "plot")]
-
 use oscirs_plot::svgplot_core::*;
 
 #[test]

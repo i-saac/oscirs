@@ -7,10 +7,7 @@
 use crate::Result;
 use crate::err::LAError;
 use crate::matrix::Matrix;
-use crate::memory::{
-    self,
-    MemoryHandler
-};
+use crate::memory::MemoryHandler;
 
 type ResultFunction = Box<dyn Fn(
     usize,
@@ -35,33 +32,33 @@ pub struct Calculator {
     custom_idcs: Vec<usize>
 }
 
-/// Initializes Calculator struct
-pub fn init() -> Result<Calculator> {
-    // Initialize vector of kernel names
-    let program_vec: Vec<&str> = super::PROGRAM_LIST.to_vec();
-    
-    // Create memory handler using program source and kernel names
-    let memory_handler: MemoryHandler = memory::new_memory_handler(super::PROGRAM_SOURCE, program_vec)?;
-
-    // Create empty memory vector
-    let mat_vector: Vec<Matrix> = Vec::with_capacity(super::INIT_MEMORY_CAPACITY);
-
-    let customs_vector: Vec<ResultFunction> = Vec::default();
-    let params_customs_vector: Vec<ParameterFunction> = Vec::default();
-    let custom_idcs_vector: Vec<usize> = Vec::default();
-
-    // Create and return new memory calculator
-    let output: Calculator = Calculator {
-        memory_handler: memory_handler,
-        matrices: mat_vector,
-        customs: customs_vector,
-        params_customs: params_customs_vector,
-        custom_idcs: custom_idcs_vector
-    };
-    Ok(output)
-}
-
 impl Calculator {
+    /// Initializes Calculator struct
+    pub fn init() -> Result<Calculator> {
+        // Initialize vector of kernel names
+        let program_vec: Vec<&str> = super::PROGRAM_LIST.to_vec();
+        
+        // Create memory handler using program source and kernel names
+        let memory_handler: MemoryHandler = MemoryHandler::new(super::PROGRAM_SOURCE, program_vec)?;
+
+        // Create empty memory vector
+        let mat_vector: Vec<Matrix> = Vec::with_capacity(super::INIT_MEMORY_CAPACITY);
+
+        let customs_vector: Vec<ResultFunction> = Vec::default();
+        let params_customs_vector: Vec<ParameterFunction> = Vec::default();
+        let custom_idcs_vector: Vec<usize> = Vec::default();
+
+        // Create and return new memory calculator
+        let output: Calculator = Calculator {
+            memory_handler: memory_handler,
+            matrices: mat_vector,
+            customs: customs_vector,
+            params_customs: params_customs_vector,
+            custom_idcs: custom_idcs_vector
+        };
+        Ok(output)
+    }
+
     /// Store matrix to calculator and gpu memory
     pub fn store_matrix(&mut self, matrix: Matrix) -> Result<usize> {
         // Store matrix to calculator memory

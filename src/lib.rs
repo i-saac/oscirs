@@ -5,20 +5,14 @@
 use std::error::Error;
 use std::result;
 
-#[cfg(feature = "linalg")]
 extern crate oscirs_linalg;
-
-#[cfg(feature = "plot")]
 extern crate oscirs_plot;
-
-#[cfg(feature = "stats")]
 extern crate oscirs_stats;
 
 pub mod err;
 pub mod math;
 pub mod vector;
 
-#[cfg(feature = "stats")]
 pub mod stats;
 
 /// Custom result type

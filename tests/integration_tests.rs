@@ -1,5 +1,4 @@
 #[test]
-#[cfg(all(feature = "plot", feature = "stats"))]
 fn normal_dist_test() {
     use oscirs_plot::svgplot_core::*;
     use oscirs_stats::summaries::Normal;
