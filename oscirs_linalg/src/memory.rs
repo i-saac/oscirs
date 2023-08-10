@@ -37,60 +37,57 @@ pub struct MemoryHandler {
 
 use crate::Result;
 use crate::err::LAError;
-use crate::matrix::{
-    new_matrix,
-    Matrix
-};
-
-pub fn new_memory_handler(program_source: &str, kernel_names: Vec<&str>) -> Result<MemoryHandler> {
-    // Get devices and create device object
-    let device_id = *get_all_devices(CL_DEVICE_TYPE_GPU)?
-        .first()
-        .expect("No device found in platform");
-    let device: Device = Device::new(device_id);
-
-    // Create context object from device
-    let context: Context = Context::from_device(&device)?;
-
-    // Create command queue from context with default queue size
-    let queue: CommandQueue = CommandQueue::create_default_with_properties(
-        &context,
-        CL_QUEUE_PROFILING_ENABLE,
-        0
-    )?;
-
-    // Compile program from source
-    let program: Program = Program::create_and_build_from_source(
-        &context,
-        program_source,
-        ""
-    ).expect("Failed to build program");
-
-    // Initialize empty kernel vector
-    let mut kernel_vector: Vec<Kernel> = Vec::with_capacity(kernel_names.len());
-
-    // Loop through each kernel name provided, create kernel and push to storage vector
-    for kernel_name in kernel_names {
-        let kernel: Kernel = Kernel::create(&program, kernel_name)?;
-
-        kernel_vector.push(kernel);
-    }
-
-    // Create empty buffer vector
-    let buffer_vector: Vec<Buffer<f32>> = Vec::with_capacity(super::INIT_MEMORY_CAPACITY);
-
-    // Create and return new Memory Handler
-    let output: MemoryHandler = MemoryHandler {
-        context: context,
-        command_queue: queue,
-        kernels: kernel_vector,
-        write_buffers: buffer_vector,
-        last_write_event: None
-    };
-    Ok(output)
-}
+use crate::matrix::Matrix;
 
 impl MemoryHandler {
+    pub fn new(program_source: &str, kernel_names: Vec<&str>) -> Result<MemoryHandler> {
+        // Get devices and create device object
+        let device_id = *get_all_devices(CL_DEVICE_TYPE_GPU)?
+            .first()
+            .expect("No device found in platform");
+        let device: Device = Device::new(device_id);
+    
+        // Create context object from device
+        let context: Context = Context::from_device(&device)?;
+    
+        // Create command queue from context with default queue size
+        let queue: CommandQueue = CommandQueue::create_default_with_properties(
+            &context,
+            CL_QUEUE_PROFILING_ENABLE,
+            0
+        )?;
+    
+        // Compile program from source
+        let program: Program = Program::create_and_build_from_source(
+            &context,
+            program_source,
+            ""
+        ).expect("Failed to build program");
+    
+        // Initialize empty kernel vector
+        let mut kernel_vector: Vec<Kernel> = Vec::with_capacity(kernel_names.len());
+    
+        // Loop through each kernel name provided, create kernel and push to storage vector
+        for kernel_name in kernel_names {
+            let kernel: Kernel = Kernel::create(&program, kernel_name)?;
+    
+            kernel_vector.push(kernel);
+        }
+    
+        // Create empty buffer vector
+        let buffer_vector: Vec<Buffer<f32>> = Vec::with_capacity(super::INIT_MEMORY_CAPACITY);
+    
+        // Create and return new Memory Handler
+        let output: MemoryHandler = MemoryHandler {
+            context: context,
+            command_queue: queue,
+            kernels: kernel_vector,
+            write_buffers: buffer_vector,
+            last_write_event: None
+        };
+        Ok(output)
+    }
+
     // Create buffer and store matrix in buffer
     pub fn store_matrix(&mut self, matrix: Matrix) -> Result<usize> {
         if matrix.get_rows() * matrix.get_cols() != matrix.get_data().len() {
@@ -226,7 +223,7 @@ impl MemoryHandler {
         self.last_write_event = Some(kernel_event);
 
         // Create and return output matrix and memory index
-        let output: Matrix = new_matrix(output_data, output_rows, output_cols)?;
+        let output: Matrix = Matrix::new(output_data, output_rows, output_cols)?;
         let output_idx: usize = self.write_buffers.len() - 1;
         Ok((output, output_idx))
     }

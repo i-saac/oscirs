@@ -15,16 +15,13 @@ This crate relies upon the [opencl3](https://crates.io/crates/opencl3) crate whi
 oscirs_linalg primarily relies upon the `Matrix` struct. You can create one using a vector of 32-bit floats in addition to a number of rows and columns whose product adds up to the length of the vector. The constructor `new_matrix` checks to make sure this is the case before successfully returning a Matrix. Data vectors are row-major. Example code can be seen below.
 
 ```rust
-use oscirs_linalg::matrix::{
-    new_matrix,
-    Matrix
-};
+use oscirs_linalg::matrix::Matrix;
 
 let data: Vec<f32> = vec![2.0; 6];
 let n_rows: usize = 2;
 let n_cols: usize = 3;
 
-let mat: Matrix = new_matrix(data, n_rows, n_cols)
+let mat: Matrix = Matrix::new(data, n_rows, n_cols)
     .expect("Failed to create mat");
 ```
 
@@ -35,7 +32,7 @@ let data_2: Vec<f32> = vec![3.0; 6];
 let n_rows_2: usize = 2;
 let n_cols_2: usize = 3;
 
-let mat_2: Matrix = new_matrix(data_2, n_rows_2, n_cols_2)
+let mat_2: Matrix = Matrix::new(data_2, n_rows_2, n_cols_2)
     .expect("Failed to create mat_2");
 
 let result: Matrix = (mat + mat_2)
@@ -57,12 +54,9 @@ While matrices can be multiplied through `A * B` syntax, this is a single-thread
 To start with parallization, first initialize the `Calculator` struct through the `init()` function. Make sure to declare it as mutable, as it will be dynamically storing matrices internally. 
 
 ```rust
-use oscirs_linalg::calculator::{
-    self,
-    Calculator
-};
+use oscirs_linalg::calculator::Calculator;
 
-let mut calc: Calculator = calculator::init()
+let mut calc: Calculator = Calculator::init()
     .expect("Failed to initialize Calculator");
 ```
 
@@ -72,9 +66,9 @@ Matrices must be stored in the calculator's memory before any operations can be 
 let a_vec: Vec<f32> = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
 let b_vec: Vec<f32> = vec![2.0, 1.0, 2.0, 3.0, 2.0, 1.0];
 
-let a_mat: Matrix = new_matrix(a_vec, 2, 3)
+let a_mat: Matrix = Matrix::new(a_vec, 2, 3)
     .expect("Failed to create Matrix A");
-let b_mat: Matrix = new_matrix(b_vec, 3, 2)
+let b_mat: Matrix = Matrix::new(b_vec, 3, 2)
     .expect("Failed to create Matrix B");
 
 let a_idx: usize = calc.store_matrix(a_mat)

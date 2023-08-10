@@ -10,15 +10,15 @@ oscirs (pronounced like the Egyptian deity Osiris) is my attempt at a scientific
 
 ## oscirs_linalg
 
-This crate focuses on Linear Algebra via the `Matrix` struct. To use this crate and any interactions added by oscirs, use the "linalg" feature in your Cargo.toml dependency line.
+This crate focuses on Linear Algebra via the `Matrix` struct.
 
 ## oscirs_plot
 
-This crate focuses on plotting data. To use this crate and any interactions added by oscirs, use the "plot" feature in your Cargo.toml dependency line.
+This crate focuses on plotting data.
 
 ## oscirs_stats
 
-This crate focuses on statistical analysis. To use this crate and any interactions added by oscirs, use the "stats" feature in your Cargo.toml dependency line.
+This crate focuses on statistical analysis.
 
 ## Use
 

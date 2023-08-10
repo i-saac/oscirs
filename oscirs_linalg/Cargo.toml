@@ -1,6 +1,6 @@
 [package]
 name = "oscirs_linalg"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "GPU accelerated linear algebra crate for scientific computing"
 readme = "README.md"
