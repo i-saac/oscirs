@@ -109,6 +109,20 @@ impl Matrix {
 
         Matrix { data: transpose_data, rows: self.cols, cols: self.rows } // Create and return transpose matrix
     }
+
+    /// Multiply matrices elementwise
+    pub fn ewmult(&self, rhs: &Matrix) -> Result<Matrix> {
+        if self.rows != rhs.rows || self.cols != rhs.cols { return Err(LAError::SizeError) }
+
+        let n_elements: usize = self.rows * self.cols;
+        let mut ewmult_data: Vec<f32> = Vec::with_capacity(n_elements);
+
+        for element in 0..n_elements {
+            ewmult_data.push(self.data[element] * rhs.data[element]);
+        }
+
+        Ok(Matrix { data: ewmult_data, rows: self.rows, cols: self.cols })
+    }
 }
 
 // Get matrix value at row, col index
@@ -123,7 +137,7 @@ impl ops::Index<[usize; 2]> for Matrix {
 }
 
 // Add f32 to Matrix
-impl ops::Add<f32> for Matrix {
+impl ops::Add<f32> for &Matrix {
     type Output = Matrix;
 
     fn add(self, rhs: f32) -> Matrix {
@@ -138,10 +152,10 @@ impl ops::Add<f32> for Matrix {
 }
 
 // Add Matrix to Matrix
-impl ops::Add<Matrix> for Matrix {
+impl ops::Add<&Matrix> for &Matrix {
     type Output = Result<Matrix>;
 
-    fn add(self, rhs: Matrix) -> Result<Matrix> {
+    fn add(self, rhs: &Matrix) -> Result<Matrix> {
         if (self.rows != rhs.rows) || (self.cols != rhs.cols) {
             return Err(LAError::SizeError)
         }
@@ -158,16 +172,16 @@ impl ops::Add<Matrix> for Matrix {
 }
 
 // Add Matrix to f32
-impl ops::Add<Matrix> for f32 {
+impl ops::Add<&Matrix> for f32 {
     type Output = Matrix;
 
-    fn add(self, rhs: Matrix) -> Matrix {
+    fn add(self, rhs: &Matrix) -> Matrix {
         rhs + self
     }
 }
 
 // Negate Matrix
-impl ops::Neg for Matrix {
+impl ops::Neg for &Matrix {
     type Output = Matrix;
 
     fn neg(self) -> Matrix {
@@ -183,7 +197,7 @@ impl ops::Neg for Matrix {
 }
 
 // Subtract f32 from Matrix
-impl ops::Sub<f32> for Matrix {
+impl ops::Sub<f32> for &Matrix {
     type Output = Matrix;
 
     fn sub(self, rhs: f32) -> Matrix {
@@ -192,28 +206,28 @@ impl ops::Sub<f32> for Matrix {
 }
 
 // Subtract Matrix from Matrix
-impl ops::Sub<Matrix> for Matrix {
+impl ops::Sub<&Matrix> for &Matrix {
     type Output = Result<Matrix>;
 
-    fn sub(self, rhs: Matrix) -> Result<Matrix> {
-        self + -rhs
+    fn sub(self, rhs: &Matrix) -> Result<Matrix> {
+        self + &-rhs
     }
 }
 
 // Subtract Matrix from f32
-impl ops::Sub<Matrix> for f32 {
+impl ops::Sub<&Matrix> for f32 {
     type Output = Matrix;
 
-    fn sub(self, rhs: Matrix) -> Matrix {
-        self + -rhs
+    fn sub(self, rhs: &Matrix) -> Matrix {
+        self + &-rhs
     }
 }
 
 // Multiply f32 by Matrix
-impl ops::Mul<Matrix> for f32 {
+impl ops::Mul<&Matrix> for f32 {
     type Output = Matrix;
 
-    fn mul(self, rhs: Matrix) -> Matrix {
+    fn mul(self, rhs: &Matrix) -> Matrix {
         let mut output_data: Vec<f32> = rhs.data.clone();
         
         for item in &mut output_data {
@@ -225,10 +239,10 @@ impl ops::Mul<Matrix> for f32 {
 }
 
 // Multiply Matrix by Matrix
-impl ops::Mul<Matrix> for Matrix {
+impl ops::Mul<&Matrix> for &Matrix {
     type Output = Result<Matrix>;
 
-    fn mul(self, rhs: Matrix) -> Result<Matrix> {
+    fn mul(self, rhs: &Matrix) -> Result<Matrix> {
         if self.cols != rhs.rows {
             return Err(LAError::SizeError)
         }

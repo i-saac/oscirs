@@ -16,7 +16,7 @@ fn linalg_readme() {
     let mat_2: Matrix = Matrix::new(data_2, n_rows_2, n_cols_2)
         .expect("Failed to create mat_2");
 
-    let result: Matrix = (mat + mat_2)
+    let result: Matrix = (&mat + &mat_2)
         .expect("Failed to add mat and mat_2");
 
     assert_eq!(result.get_data(), vec![5.0; 6]);

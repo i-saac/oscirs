@@ -168,32 +168,38 @@ fn cpu_operations() {
     let value: f32 = 2.0;
 
     let fladd_vec: Vec<f32> = vec![3.0, 4.0, 5.0, 6.0, 7.0, 8.0];
-    let fladd_mat: Matrix = a_mat.clone() + value;
+    let fladd_mat: Matrix = &a_mat + value;
     assert_eq!(fladd_mat.get_data(), fladd_vec, "Matrix-Float addition not as expected");
 
     let add_vec: Vec<f32> = vec![3.0, 3.0, 5.0, 7.0, 7.0, 7.0];
-    let add_mat: Matrix = (a_mat.clone() + b_mat.clone()).expect("Failed to add Matrix A and Matrix B");
+    let add_mat: Matrix = (&a_mat + &b_mat).expect("Failed to add Matrix A and Matrix B");
     assert_eq!(add_mat.get_data(), add_vec, "Matrix-Matrix addition not as expected");
 
     let neg_vec: Vec<f32> = vec![-1.0, -2.0, -3.0, -4.0, -5.0, -6.0];
-    let neg_mat: Matrix = -a_mat.clone();
+    let neg_mat: Matrix = -&a_mat;
     assert_eq!(neg_mat.get_data(), neg_vec, "Matrix negation not as expected");
 
     let flsub_vec: Vec<f32> = vec![-1.0, 0.0, 1.0, 2.0, 3.0, 4.0];
-    let flsub_mat: Matrix = a_mat.clone() - value;
+    let flsub_mat: Matrix = &a_mat - value;
     assert_eq!(flsub_mat.get_data(), flsub_vec, "Matrix-Float subtraction not as expected");
 
     let sub_vec: Vec<f32> = vec![-1.0, 1.0, 1.0, 1.0, 3.0, 5.0];
-    let sub_mat: Matrix = (a_mat.clone() - b_mat).expect("Failed to subtract Matrix B from Matrix A");
+    let sub_mat: Matrix = (&a_mat - &b_mat).expect("Failed to subtract Matrix B from Matrix A");
     assert_eq!(sub_mat.get_data(), sub_vec, "Matrix-Matrix subtraction not as expected");
 
     let flmul_vec: Vec<f32> = vec![2.0, 4.0, 6.0, 8.0, 10.0, 12.0];
-    let flmul_mat: Matrix = value * a_mat.clone();
+    let flmul_mat: Matrix = value * &a_mat;
     assert_eq!(flmul_mat.get_data(), flmul_vec, "Matrix-Float multiplication not as expected");
 
     let mul_vec: Vec<f32> = vec![10.0, 10.0, 25.0, 28.0];
-    let mul_mat: Matrix = (a_mat * b_transpose).expect("Failed to multiply Matrix A by Matrix B");
+    let mul_mat: Matrix = (&a_mat * &b_transpose).expect("Failed to multiply Matrix A by Matrix B");
     assert_eq!(mul_mat.get_data(), mul_vec, "Matrix-Matrix multiplication data not as expected");
     assert_eq!(mul_mat.get_rows(), 2, "Matrix-Matrix multiplication row dimension not as expected");
     assert_eq!(mul_mat.get_cols(), 2, "Matrix-Matrix multiplication col dimension not as expected");
+
+    let ewmult_vec: Vec<f32> = vec![2.0, 2.0, 6.0, 12.0, 10.0, 6.0];
+    let ewmult_mat: Matrix = a_mat.ewmult(&b_mat).expect("Failed to elementwise multiply Matrix A by Matrix B");
+    assert_eq!(ewmult_mat.get_data(), ewmult_vec, "Elementwise multiplication data not as expected");
+    assert_eq!(ewmult_mat.get_rows(), 2, "Elementwise multiplication row dimension not as expected");
+    assert_eq!(ewmult_mat.get_cols(), 3, "Elementwise multiplication col dimension not as expected");
 }
